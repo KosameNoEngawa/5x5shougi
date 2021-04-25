@@ -1,17 +1,16 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Field></Field>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Field from './components/field.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    Field,
   }
 }
 </script>
@@ -24,5 +23,7 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+  width: 50%;
+  margin: 0 auto;
 }
 </style>
