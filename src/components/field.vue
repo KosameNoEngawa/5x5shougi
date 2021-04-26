@@ -1,27 +1,33 @@
 <template>
 <div id='field-wrapper'>
-  <div id='bord'>
-    <div v-for='x in 5' v-bind:key='x' class='row'>
-      <div v-for='y in 5' v-bind:key='y' class='clumn'>
-        <div class='mass' 
-        v-on:click="select_place(x,y)" 
-        v-bind:style="next_place(x,y)" 
-        v-bind:id='`${x}-$[y]`'>
-          <button v-on:click="select_king(x,y)" v-show='king_position(x,y)'>
-            王
-          </button>
-          <button v-bind:class='status' 
-          v-on:click="enemy_select_king(x,y)" 
-          v-show='enemy_king_position(x,y)'>
-            玉
-          </button>
-          <button v-on:click="select_knight(x,y)" v-show='knight_position(x,y)'>
-            騎
-          </button>
+  <div id='opponent-waiting'></div>
+  <div id='bord-wrapper'>
+    <p v-bind:style="opponent()">こちら側のターンです</p>
+    <div id='bord'>
+      <div v-for='x in 5' v-bind:key='x' class='row'>
+        <div v-for='y in 5' v-bind:key='y' class='clumn'>
+          <div class='mass' 
+          v-on:click="select_place(x,y)" 
+          v-bind:style="next_place(x,y)" 
+          v-bind:id='`${x}-$[y]`'>
+            <button v-on:click="select_king(x,y)" v-show='king_position(x,y)'>
+              王
+            </button>
+            <button v-bind:class='team_judg(x,y)' 
+            v-on:click="enemy_select_king(x,y)" 
+            v-show='enemy_king_position(x,y)'>
+              玉
+            </button>
+            <button v-on:click="select_knight(x,y)" v-show='knight_position(x,y)'>
+              騎
+            </button>
+          </div>
         </div>
       </div>
     </div>
+    <p v-bind:style="supporter()">こちら側のターンです</p>
   </div>
+  <div id='supporter-waiting'></div>
 </div>
 </template>
 
@@ -36,6 +42,9 @@ export default {
         knight_y: 4,
         enemy_king_x: 1,
         enemy_king_y: 3,
+      },
+      opponent_waiting: {
+
       },
       //コマが次に動けるマスを表示するかしないか
       //コマを押した時に値がtrueに
@@ -52,17 +61,19 @@ export default {
 
       next_place_now: false,
 
-      //敵のコマのクラスをenemyにする
-      status: 'opponent',
-
       turn: 'supporter_turn', //敵の時はopponent_turn
+      git: false,
     }
   },
-  computed: {
+  coputed: {
   },
   methods: {
     //王の初期位置
     king_position: function(x,y) {
+      console.log('position');
+        if(this.get == true) {
+          return false
+        }
         if(x == this.place.king_x && y == this.place.king_y){
           this.king_piece_wait = false
           return true
@@ -91,6 +102,9 @@ export default {
           x == this.place.king_x + 1 && y == this.place.king_y ||
           x == this.place.king_x + 1 && y == this.place.king_y + 1
         ) {
+          if(this.get == true) {
+            return 
+          }
           return {backgroundColor: 'aqua'}
         }
       }
@@ -119,6 +133,10 @@ export default {
       }
     },
     select_king: function(x,y) {
+        if(this.select_enemy_king_status == true) {
+          console.log('get=true');
+          this.get = true
+        }
       this.select_knight_status = false
       this.select_enemy_king_status = false
       this.next_place(x,y)
@@ -218,10 +236,53 @@ export default {
       this.select_knight_status = false
       this.select_enemy_king_status = false
     },
+    team_judg: function(x,y) {
+      if(x == this.place.king_x && y == this.place.king_y) {
+        return 'supporter'
+      }
+      if(x == this.place.enemy_king_x && y == this.place.enemy_king_y) {
+        return 'opponent'
+      }
+    },
+    //どっちのターンか表示する
+    opponent: function() {
+      if(this.turn == 'opponent_turn') {
+        return {visibility: 'visible'}
+      }
+      if(this.turn == 'supporter_turn') {
+        return {visibility: 'hidden'}
+      }
+    },
+    supporter: function() {
+      if(this.turn == 'supporter_turn') {
+        return {visibility: 'visible'}
+      }
+      if(this.turn == 'opponent_turn') {
+        return {visibility: 'hidden'}
+      }
+    },
   }
 }
 </script>
 <style>
+#field-wrapper {
+  display: flex;
+}
+#bord-wrapper {
+  display: block;
+}
+#opponent-waiting {
+  border: solid 2px #333333;
+  margin: 55px 10px;
+  width: 150px;
+  height: 200px;
+}
+#supporter-waiting {
+  border: solid 2px #333333;
+  margin: 365px 0px 0px 10px;
+  width: 150px;
+  height: 200px;
+}
 #bord {
   margin: 0 auto;
   width: 510px;
